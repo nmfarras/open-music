@@ -99,7 +99,7 @@ class SongsHandler {
           return acc;
         }, {}));
     }
-    if (performer !== undefined & title !== undefined) {
+    if (performer !== undefined && title !== undefined) {
       const findTitle = title;
       const findPerformer = performer;
       songs = songList
