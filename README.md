@@ -41,7 +41,7 @@ The user, password, and db can be create and set on psql. Make sure to grant all
 
 ### `.prod.env`
 
-which contain postgres port and host
+which contain postgres port and host as followed:
 
 ```shell
 # server configuration
