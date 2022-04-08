@@ -12,6 +12,10 @@ Runs the app in the development mode.\
 Open [http://localhost:5000](http://localhost:5000) to access.
 Postman will be used for testing.
 
+### `npm install`
+
+Install all module listed on 'package.json'.
+
 ## Setting up database
 
 In the project directory, create file:
@@ -26,16 +30,16 @@ HOST=localhost
 PORT=5000
  
 # node-postgres configuration
-PGUSER=developer
+PGUSER=user
 PGHOST=localhost
-PGPASSWORD=supersecretpassword
-PGDATABASE=openmusicapp
+PGPASSWORD=password
+PGDATABASE=db
 PGPORT=5432
 ```
 
-and add file:
+The user, password, and db can be create and set on psql. Make sure to grant all privileges to the user for the database. And add file:
 
-### `.env`
+### `.prod.env`
 
 which contain postgres port and host
 
@@ -44,3 +48,17 @@ which contain postgres port and host
 HOST=0.0.0.0
 PORT=5000
 ```
+
+Make sure the postgres service run, or you can run:
+
+```shell
+sudo service postgresql start
+```
+
+If the user, pass, and database already set, and all module already installed, run following script on terminal:
+
+```shell
+npm run migrate up
+```
+
+this command will create table on the database based on the setting available on migrations folder.
