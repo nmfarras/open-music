@@ -51,13 +51,13 @@ PORT=5000
 
 Make sure the postgres service run, or you can run:
 
-```shell
+```zsh
 sudo service postgresql start
 ```
 
 If the user, pass, and database already set, and all module already installed, run following script on terminal:
 
-```shell
+```zsh
 npm run migrate up
 ```
 
