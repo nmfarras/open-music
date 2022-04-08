@@ -14,8 +14,7 @@ class SongsService {
     title, year, performer, genre, duration, albumId,
   }) {
     const id = `song-${nanoid(16)}`;
-    console.log('a');
-    console.log(`a ${albumId}`);
+
     const query = {
       text: 'INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
       values: [id, title, year, performer, genre, duration, albumId],
@@ -32,7 +31,7 @@ class SongsService {
 
   async getSongs() {
     const result = await this._pool.query('SELECT * FROM songs');
-    // console.log(result.rows);
+
     return result.rows;
   }
 
