@@ -33,7 +33,7 @@ class AlbumsService {
 
   async getAlbumById(id) {
     const query = {
-      text: 'SELECT * FROM albums WHERE id = $1',
+      text: "SELECT a.id, a.name, a.year, json_agg(json_build_object('id', s.id, 'title' , s.title, 'performer', s.performer)) AS songs FROM albums a JOIN songs s ON a.id=s.album_id GROUP BY a.id HAVING a.id = $1",
       values: [id],
     };
     const result = await this._pool.query(query);
