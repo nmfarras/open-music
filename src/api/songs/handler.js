@@ -21,8 +21,8 @@ class SongsHandler {
         year,
         performer,
         genre,
-        duration = '',
-        albumId = '',
+        duration,
+        albumId,
       } = request.payload;
 
       const songId = await this._service.addSong({
@@ -68,36 +68,23 @@ class SongsHandler {
     const songList = await this._service.getSongs();
 
     const { title, performer } = request.query;
-    const keysToKeep = ['id', 'title', 'performer'];
 
     let songs;
-    songs = songList.map((song) => keysToKeep.reduce((acc, curr) => {
-      acc[curr] = song[curr];
-      return acc;
-    }, {}));
+    songs = songList;
 
     if (title !== undefined) {
       const findTitle = title;
       songs = songList
         .filter(
           (song) => song.title.toLowerCase().indexOf(findTitle.toLowerCase()) !== -1,
-        )
-        .map((song) => keysToKeep.reduce((acc, curr) => {
-          acc[curr] = song[curr];
-          return acc;
-        }, {}));
+        );
     }
     if (performer !== undefined) {
       const findPerformer = performer;
       songs = songList
         .filter(
-          // (song) => song.performer === findPerformer,
           (song) => song.performer.toLowerCase().indexOf(findPerformer.toLowerCase()) !== -1,
-        )
-        .map((song) => keysToKeep.reduce((acc, curr) => {
-          acc[curr] = song[curr];
-          return acc;
-        }, {}));
+        );
     }
     if (performer !== undefined && title !== undefined) {
       const findTitle = title;
@@ -108,11 +95,7 @@ class SongsHandler {
         )
         .filter(
           (song) => song.performer.toLowerCase().indexOf(findPerformer.toLowerCase()) !== -1,
-        )
-        .map((song) => keysToKeep.reduce((acc, curr) => {
-          acc[curr] = song[curr];
-          return acc;
-        }, {}));
+        );
     }
     return {
       status: 'success',
