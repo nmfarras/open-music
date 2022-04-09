@@ -1,4 +1,4 @@
-# Getting Started with Open Music App
+# Getting Started with Open Music API
 
 This project is part of Dicoding assignment, create using ExpressJS.
 
