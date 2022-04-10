@@ -28,7 +28,13 @@ const AuthenticationsService = require('./services/postgres/AuthenticationsServi
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
 
+// playlists
+const playlists = require('./api/playlists');
+const PlaylistsService = require('./services/postgres/UsersService');
+const PlaylistsValidator = require('./validator/users');
+
 const init = async () => {
+  const playlistsService = new PlaylistsService();
   const songsService = new SongsService();
   const albumsService = new AlbumsService();
   const usersService = new UsersService();
@@ -52,7 +58,7 @@ const init = async () => {
   ]);
 
   // mendefinisikan strategy autentikasi jwt
-  server.auth.strategy('notesapp_jwt', 'jwt', {
+  server.auth.strategy('openmusicsapp_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
@@ -81,6 +87,13 @@ const init = async () => {
       options: {
         service: albumsService,
         validator: AlbumsValidator,
+      },
+    },
+    {
+      plugin: playlists,
+      options: {
+        service: playlistsService,
+        validator: PlaylistsValidator,
       },
     },
     {

@@ -11,7 +11,7 @@ exports.up = (pgm) => {
   // membuat album baru.
   pgm.sql(`INSERT INTO albums(id, name, year) VALUES (${id}, 'other album', ${currentYear})`);
 
-  // mengubah nilai album_id pada note yang album_id-nya bernilai NULL
+  // mengubah nilai album_id pada song yang album_id-nya bernilai NULL
   pgm.sql(`UPDATE songs SET album_id = ${id} WHERE album_id = NULL`);
 
   // memberikan constraint foreign key pada album_id terhadap kolom id dari tabel albums
@@ -19,6 +19,6 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  // menghapus constraint fk_songs.owner_users.id pada tabel notes
+  // menghapus constraint fk_songs.owner_users.id pada tabel songs
   pgm.dropConstraint('songs', 'fk_songs.album_id_albums.id');
 };
