@@ -32,21 +32,18 @@ class AlbumsService {
   }
 
   async getAlbumById(id) {
-    let query = {
-      text: "SELECT a.id, a.name, a.year, json_agg(json_build_object('id', s.id, 'title' , s.title, 'performer', s.performer)) AS songs FROM albums a JOIN songs s ON a.id=s.album_id GROUP BY a.id HAVING a.id = $1",
+    const query = {
+      text: `SELECT a.id, a.name, a.year, 
+      json_agg(s.*) AS songs 
+      FROM albums a LEFT JOIN songs s 
+      ON a.id=s.album_id GROUP BY a.id 
+      HAVING a.id = $1`,
       values: [id],
     };
-    let result = await this._pool.query(query);
+    const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      query = {
-        text: 'SELECT * FROM albums WHERE id = $1',
-        values: [id],
-      };
-      result = await this._pool.query(query);
-      if (!result.rows.length) {
-        throw new NotFoundError('Album tidak ditemukan');
-      }
+      throw new NotFoundError('Album tidak ditemukan');
     }
 
     return result.rows[0];
