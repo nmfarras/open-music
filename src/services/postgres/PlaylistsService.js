@@ -7,7 +7,7 @@ const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
 
-// const { mapDBToModel } = require('../../utils/mapDBToModel');
+const { mapDBToModelPlaylist } = require('../../utils/mapDBToModelPlaylist');
 
 class PlaylistsService {
   constructor(collaborationService) {
@@ -18,7 +18,7 @@ class PlaylistsService {
   async addPlaylist({
     name, owner,
   }) {
-    const id = nanoid(16);
+    const id = `playlist-${nanoid(16)}`;
 
     const query = {
       text: 'INSERT INTO playlists VALUES($1, $2, $3) RETURNING id',
@@ -43,7 +43,7 @@ class PlaylistsService {
       values: [owner],
     };
     const result = await this._pool.query(query);
-    return result.rows;
+    return result.rows.map(mapDBToModelPlaylist);
   }
 
   async getPlaylistById(id) {
@@ -131,6 +131,31 @@ class PlaylistsService {
     const result = await this._pool.query(query);
     return result.rows;
   }
+
+  // async getSongsInPlaylistById(id) {
+  //   const query = {
+  //     text: `SELECT playlists.*, users.username
+  //     FROM playlists
+  //     LEFT JOIN users ON users.id = playlists.owner
+  //     WHERE playlists.id = $1`,
+  //     values: [id],
+  //   };
+  //   // const query = {
+  //   //   text: `SELECT a.id, a.name, a.year,
+  //   //   json_agg(s.*) AS songs
+  //   //   FROM albums a LEFT JOIN songs s
+  //   //   ON a.id=s.album_id GROUP BY a.id
+  //   //   HAVING a.id = $1`,
+  //   //   values: [id],
+  //   // };
+  //   const result = await this._pool.query(query);
+
+  //   if (!result.rows.length) {
+  //     throw new NotFoundError('Playlist tidak ditemukan');
+  //   }
+
+  //   return result.rows[0];
+  // }
 }
 
 module.exports = PlaylistsService;

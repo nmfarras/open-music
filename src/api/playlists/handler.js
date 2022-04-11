@@ -16,6 +16,7 @@ class PlaylistsHandler {
 
   async postPlaylistHandler(request, h) {
     try {
+      console.log(request.payload);
       this._validator.validatePlaylistPayload(request.payload);
       const { name } = request.payload;
       const { id: credentialId } = request.auth.credentials;
@@ -129,6 +130,35 @@ class PlaylistsHandler {
       return {
         status: 'success',
         message: 'Playlist berhasil dihapus',
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        return error;
+      }
+
+      // Server ERROR!
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      console.error(error);
+      return response;
+    }
+  }
+
+  async getSongsInPlaylistByIdHandler(request, h) {
+    try {
+      const { id } = request.params;
+      const { id: credentialId } = request.auth.credentials;
+
+      await this._service.verifyPlaylistAccess(id, credentialId);
+      const playlist = await this._service.getPlaylistById(id);
+      return {
+        status: 'success',
+        data: {
+          playlist,
+        },
       };
     } catch (error) {
       if (error instanceof ClientError) {
