@@ -6,9 +6,8 @@ const InvariantError = require('../../exceptions/InvariantError');
 // const { mapDBToModelPlaylistSong } = require('../../utils/mapDBToModelPlaylistSong');
 
 class PlaylistSongsService {
-  constructor(songService) {
+  constructor() {
     this._pool = new Pool();
-    this._songService = songService;
   }
 
   // async getPlaylistActivityByPlaylistId(id) {
@@ -41,7 +40,7 @@ class PlaylistSongsService {
   async addPlaylistActivityByPlaylistId(playlistId, songId, userId, action) {
     const id = nanoid(16);
     const time = new Date().toISOString();
-    await this._songService.getSongById(songId);
+    // await this._songService.getSongById(songId);
 
     const query = {
       text: 'INSERT INTO playlist_song_activities VALUES($1, $2, $3, $4, $5, $6) RETURNING id',

@@ -17,11 +17,12 @@ class PlaylistSongActivitiesHandler {
       const { id: credentialId } = request.auth.credentials;
 
       await this._playlistsService.verifyPlaylistAccess(id, credentialId);
-      const playlist = await this._playlistSongActivitiesService.getSongsInPlaylistById(id);
+      const playlistActivities = await this._playlistSongActivitiesService
+        .getPlaylistActivityByPlaylistId(id);
       return {
         status: 'success',
         data: {
-          playlist,
+          playlistActivities,
         },
       };
     } catch (error) {

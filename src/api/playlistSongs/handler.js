@@ -45,6 +45,7 @@ class PlaylistSongsHandler {
 
   async postPlaylistSongByPlaylistIdHandler(request, h) {
     try {
+      console.log(request.payload);
       this._validator.validatePlaylistSongPayload(request.payload);
       const { id: playlistId } = request.params;
       console.log(playlistId);
@@ -59,7 +60,8 @@ class PlaylistSongsHandler {
       const playlistSongId = await this
         ._playlistSongsService.addPlaylistSong(playlistId, songId);
 
-      await this._playlistSongActivitiesService.addPlaylistActivityByPlaylistId();
+      await this._playlistSongActivitiesService
+        .addPlaylistActivityByPlaylistId(playlistId, songId, credentialId, 'add');
 
       const response = h.response({
         status: 'success',
