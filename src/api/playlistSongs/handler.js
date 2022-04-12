@@ -101,6 +101,8 @@ class PlaylistSongsHandler {
         credentialId,
       );
       await this._playlistSongsService.deletePlaylistSong(playlistId, songId);
+      await this._playlistSongActivitiesService
+        .addPlaylistActivityByPlaylistId(playlistId, songId, credentialId, 'delete');
 
       return {
         status: 'success',
