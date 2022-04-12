@@ -2,10 +2,9 @@
 const ClientError = require('../../exceptions/ClientError');
 
 class PlaylistSongActivitiesHandler {
-  constructor(playlistSongActivitiesService, playlistsService, validator) {
+  constructor(playlistSongActivitiesService, playlistsService) {
     this._playlistSongActivitiesService = playlistSongActivitiesService;
     this._playlistsService = playlistsService;
-    this._validator = validator;
 
     this.getPlaylistSongActivitiesByPlaylistIdHandler = this
       .getPlaylistSongActivitiesByPlaylistIdHandler.bind(this);
@@ -13,16 +12,16 @@ class PlaylistSongActivitiesHandler {
 
   async getPlaylistSongActivitiesByPlaylistIdHandler(request, h) {
     try {
-      const { id } = request.params;
+      const { id: playlistId } = request.params;
       const { id: credentialId } = request.auth.credentials;
 
-      await this._playlistsService.verifyPlaylistAccess(id, credentialId);
-      const playlistActivities = await this._playlistSongActivitiesService
-        .getPlaylistActivityByPlaylistId(id);
+      await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
+      const activities = await this._playlistSongActivitiesService
+        .getPlaylistActivityByPlaylistId(playlistId);
       return {
         status: 'success',
         data: {
-          playlistActivities,
+          playlistId, activities,
         },
       };
     } catch (error) {
