@@ -50,7 +50,7 @@ class PlaylistSongsHandler {
       const { id: credentialId } = request.auth.credentials;
       const { songId } = request.payload;
 
-      await this._playlistsService.verifyPlaylistOwner(
+      await this._playlistsService.verifyPlaylistAccess(
         playlistId,
         credentialId,
       );
@@ -90,7 +90,7 @@ class PlaylistSongsHandler {
       const { id: credentialId } = request.auth.credentials;
       const { songId } = request.payload;
 
-      await this._playlistsService.verifyPlaylistOwner(
+      await this._playlistsService.verifyPlaylistAccess(
         playlistId,
         credentialId,
       );
