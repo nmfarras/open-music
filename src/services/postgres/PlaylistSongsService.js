@@ -2,7 +2,8 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { mapDBToModelPlaylistSong } = require('../../utils/mapDBToModelPlaylistSong');
+// const { mapDBToModelPlaylist } = require('../../utils/mapDBToModelPlaylist');
+// const { mapDBToModelPlaylistSong } = require('../../utils/mapDBToModelPlaylistSong');
 
 class PlaylistSongsService {
   constructor(songService) {
@@ -12,35 +13,26 @@ class PlaylistSongsService {
 
   async getSongsInPlaylistById(id) {
     const query = {
-      text: `SELECT playlists.*, users.username
-          FROM playlists
-          LEFT JOIN users ON users.id = playlists.owner
-          WHERE playlists.id = $1`,
+      text: `SELECT p.id, p.name, u.username, 
+      json_agg(json_build_object('id', s.id, 'title' , s.title, 'performer', s.performer)) AS songs
+      FROM playlists p
+      JOIN users u
+      ON p.owner = u.id
+      JOIN playlistsongs ps
+      ON p.id = ps.playlist_id
+      JOIN songs s
+      ON ps.song_id = s.id
+      GROUP BY p.id,u.username
+      HAVING p.id = $1`,
       values: [id],
     };
-    // const query = {
-    //   text: `SELECT playlists.*, users.username,
-    //       json_args(s.id, s.title, s.performer) AS songs
-    //       FROM playlists
-    //       LEFT JOIN users ON users.id = playlists.owner
-    //       WHERE playlists.id = $1`,
-    //   values: [id],
-    // };
-    // const query = {
-    //   text: `SELECT a.id, a.name, a.year,
-    //   json_agg(s.*) AS songs
-    //   FROM albums a LEFT JOIN songs s
-    //   ON a.id=s.album_id GROUP BY a.id
-    //   HAVING a.id = $1`,
-    //   values: [id],
-    // };
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
 
-    return result.rows.map(mapDBToModelPlaylistSong)[0];
+    return result.rows[0];
   }
 
   async addPlaylistSong(playlistId, songId) {

@@ -7,8 +7,6 @@ const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
 
-const { mapDBToModelPlaylist } = require('../../utils/mapDBToModelPlaylist');
-
 class PlaylistsService {
   constructor(collaborationService) {
     this._pool = new Pool();
@@ -36,14 +34,16 @@ class PlaylistsService {
 
   async getPlaylists(owner) {
     const query = {
-      text: `SELECT playlists.* FROM playlists
-      LEFT JOIN collaborations ON collaborations.playlist_id = playlists.id
-      WHERE playlists.owner = $1 OR collaborations.user_id = $1
-      GROUP BY playlists.id`,
+      text: `SELECT p.id, p.name, u.username
+      FROM playlists p
+      LEFT JOIN collaborations c ON c.playlist_id = p.id
+      LEFT JOIN users u ON p.owner = u.id
+      GROUP BY p.id, u.username
+      HAVING p.owner = $1 OR c.user_id = $1`,
       values: [owner],
     };
     const result = await this._pool.query(query);
-    return result.rows.map(mapDBToModelPlaylist);
+    return result.rows;
   }
 
   async getPlaylistById(id) {
@@ -131,31 +131,6 @@ class PlaylistsService {
     const result = await this._pool.query(query);
     return result.rows;
   }
-
-  // async getSongsInPlaylistById(id) {
-  //   const query = {
-  //     text: `SELECT playlists.*, users.username
-  //     FROM playlists
-  //     LEFT JOIN users ON users.id = playlists.owner
-  //     WHERE playlists.id = $1`,
-  //     values: [id],
-  //   };
-  //   // const query = {
-  //   //   text: `SELECT a.id, a.name, a.year,
-  //   //   json_agg(s.*) AS songs
-  //   //   FROM albums a LEFT JOIN songs s
-  //   //   ON a.id=s.album_id GROUP BY a.id
-  //   //   HAVING a.id = $1`,
-  //   //   values: [id],
-  //   // };
-  //   const result = await this._pool.query(query);
-
-  //   if (!result.rows.length) {
-  //     throw new NotFoundError('Playlist tidak ditemukan');
-  //   }
-
-  //   return result.rows[0];
-  // }
 }
 
 module.exports = PlaylistsService;
