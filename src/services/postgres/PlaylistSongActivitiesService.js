@@ -36,7 +36,6 @@ class PlaylistSongsService {
   async addPlaylistActivityByPlaylistId(playlistId, songId, userId, action) {
     const id = nanoid(16);
     const time = new Date().toISOString();
-    // await this._songService.getSongById(songId);
 
     const query = {
       text: 'INSERT INTO playlist_song_activities VALUES($1, $2, $3, $4, $5, $6) RETURNING id',

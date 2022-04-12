@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 
 // exceptions
 const InvariantError = require('../../exceptions/InvariantError');
-// const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
 
 class AuthenticationsService {
