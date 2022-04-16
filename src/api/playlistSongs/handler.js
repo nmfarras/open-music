@@ -45,10 +45,8 @@ class PlaylistSongsHandler {
 
   async postPlaylistSongByPlaylistIdHandler(request, h) {
     try {
-      console.log(request.payload);
       this._validator.validatePlaylistSongPayload(request.payload);
       const { id: playlistId } = request.params;
-      console.log(playlistId);
       const { id: credentialId } = request.auth.credentials;
       const { songId } = request.payload;
 
@@ -92,7 +90,6 @@ class PlaylistSongsHandler {
     try {
       this._validator.validatePlaylistSongPayload(request.payload);
       const { id: playlistId } = request.params;
-      console.log(playlistId);
       const { id: credentialId } = request.auth.credentials;
       const { songId } = request.payload;
 
