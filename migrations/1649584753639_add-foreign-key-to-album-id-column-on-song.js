@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 const { nanoid } = require('nanoid');
 
 exports.up = (pgm) => {
