@@ -46,6 +46,7 @@ const PlaylistSongsValidator = require('./validator/playlistSongs');
 // playlistSongActivities
 const playlistSongActivities = require('./api/playlistSongActivities');
 const PlaylistSongActivitiesService = require('./services/postgres/PlaylistSongActivitiesService');
+const InternalServerError = require('./exceptions/InternalServerError');
 
 const init = async () => {
   const usersService = new UsersService();
@@ -164,6 +165,16 @@ const init = async () => {
       const newResponse = h.response({
         status: 'fail',
         message: response.message,
+      });
+      newResponse.code(response.statusCode);
+      return newResponse;
+    }
+
+    if (response instanceof InternalServerError) {
+      // membuat response baru dari response toolkit sesuai kebutuhan error handling
+      const newResponse = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
       });
       newResponse.code(response.statusCode);
       return newResponse;
