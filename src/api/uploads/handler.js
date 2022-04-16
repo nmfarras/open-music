@@ -1,7 +1,8 @@
 const ClientError = require('../../exceptions/ClientError');
 
 class UploadsHandler {
-  constructor(service, validator) {
+  constructor(albumsService, service, validator) {
+    this._albumsService = albumsService;
     this._service = service;
     this._validator = validator;
 
@@ -11,16 +12,17 @@ class UploadsHandler {
   async postUploadImageHandler(request, h) {
     try {
       const { data } = request.payload;
+      const { id: albumId } = request.params;
       this._validator.validateImageHeaders(data.hapi.headers);
 
       const filename = await this._service.writeFile(data, data.hapi);
+      const coverUrl = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
+
+      await this._albumsService.editAlbumCoverById(albumId, coverUrl);
 
       const response = h.response({
         status: 'success',
         message: 'Sampul berhasil diunggah',
-        data: {
-          fileLocation: `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`,
-        },
       });
       response.code(201);
       return response;
