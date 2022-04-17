@@ -23,7 +23,7 @@ class UserAlbumLikessHandler {
     return response;
   }
 
-  async getUserAlbumLikesHandler(request) {
+  async getUserAlbumLikesHandler(request, h) {
     const { id: albumId } = request.params;
 
     const totalLike = await this._service.getUserAlbumLikeCount(
@@ -32,12 +32,15 @@ class UserAlbumLikessHandler {
     let { likes } = totalLike;
     likes = parseInt(likes, 10);
 
-    return {
+    const response = h.response({
       status: 'success',
       data: {
         likes,
       },
-    };
+    });
+    response.code(200);
+    response.header('X-Data-Source', 'cache');
+    return response;
   }
 }
 
