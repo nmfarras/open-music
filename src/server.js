@@ -8,6 +8,7 @@ const path = require('path');
 
 // exceptions
 const ClientError = require('./exceptions/ClientError');
+const InternalServerError = require('./exceptions/InternalServerError');
 
 // songs
 const songs = require('./api/songs');
@@ -48,7 +49,6 @@ const PlaylistSongsValidator = require('./validator/playlistSongs');
 // playlistSongActivities
 const playlistSongActivities = require('./api/playlistSongActivities');
 const PlaylistSongActivitiesService = require('./services/postgres/PlaylistSongActivitiesService');
-const InternalServerError = require('./exceptions/InternalServerError');
 
 // Exports
 const _exports = require('./api/exports');
@@ -60,10 +60,15 @@ const uploads = require('./api/uploads');
 const StorageService = require('./services/storage/StorageService');
 const UploadsValidator = require('./validator/uploads');
 
+// userAlbumLikes
+const userAlbumLikes = require('./api/userAlbumLikes');
+const UserAlbumLikesService = require('./services/postgres/UserAlbumLikesService');
+
 const init = async () => {
   const usersService = new UsersService();
   const collaborationsService = new CollaborationsService(usersService);
   const playlistsService = new PlaylistsService(collaborationsService);
+  const userAlbumLikesService = new UserAlbumLikesService(playlistsService);
   const songsService = new SongsService();
   const albumsService = new AlbumsService();
   const authenticationsService = new AuthenticationsService();
@@ -186,6 +191,12 @@ const init = async () => {
         validator: UploadsValidator,
       },
     },
+    {
+      plugin: userAlbumLikes,
+      options: {
+        service: userAlbumLikesService,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
@@ -202,15 +213,15 @@ const init = async () => {
       return newResponse;
     }
 
-    if (response instanceof InternalServerError) {
-      // membuat response baru dari response toolkit sesuai kebutuhan error handling
-      const newResponse = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
-      });
-      newResponse.code(response.statusCode);
-      return newResponse;
-    }
+    // if (response instanceof InternalServerError) {
+    //   // membuat response baru dari response toolkit sesuai kebutuhan error handling
+    //   const newResponse = h.response({
+    //     status: 'error',
+    //     message: 'Maaf, terjadi kegagalan pada server kami.',
+    //   });
+    //   newResponse.code(response.statusCode);
+    //   return newResponse;
+    // }
 
     // jika bukan ClientError, lanjutkan dengan response sebelumnya (tanpa terintervensi)
     return response.continue || response;

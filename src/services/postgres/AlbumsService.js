@@ -71,7 +71,9 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Gagal memperbarui cover album. Id tidak ditemukan');
+      throw new NotFoundError(
+        'Gagal memperbarui cover album. Id tidak ditemukan',
+      );
     }
   }
 
@@ -87,6 +89,38 @@ class AlbumsService {
       throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
     }
   }
+
+  // async addUserAlbumLike(userId, albumId) {
+  //   const id = `like-${nanoid(16)}`;
+
+  //   const query = {
+  //     text: 'INSERT INTO user_album_likes VALUES($1, $2, $3) RETURNING id',
+  //     values: [id, userId, albumId],
+  //   };
+
+  //   const result = await this._pool.query(query);
+
+  //   if (!result.rows[0].id) {
+  //     throw new InvariantError('Menyukai album gagal ditambahkan');
+  //   }
+
+  //   return result.rows[0].id;
+  // }
+
+  // async deleteUserAlbumLike(userId, albumId) {
+  //   const query = {
+  //     text: 'DELETE FROM albums WHERE user_id = $1 AND album_id = $2 RETURNING id',
+  //     values: [userId, albumId],
+  //   };
+
+  //   const result = await this._pool.query(query);
+
+  //   if (!result.rows.length) {
+  //     throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
+  //   }
+
+  //   return result.rows;
+  // }
 }
 
 module.exports = AlbumsService;

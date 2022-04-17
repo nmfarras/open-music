@@ -13,7 +13,6 @@ class UploadsHandler {
     try {
       const { cover } = request.payload;
       const { id: albumId } = request.params;
-      console.log(cover);
       this._validator.validateImageHeaders(cover.hapi.headers);
 
       const filename = await this._service.writeFile(cover, cover.hapi);
