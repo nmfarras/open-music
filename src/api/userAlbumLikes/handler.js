@@ -9,11 +9,6 @@ class UserAlbumLikessHandler {
   async postUserAlbumLikesHandler(request, h) {
     const { id: albumId } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    console.log(request.params.id);
-    console.log(albumId);
-
-    console.log(request.auth.credentials.id);
-    console.log(credentialId);
 
     const message = await this._service.addUserAlbumLike(
       credentialId,
@@ -29,15 +24,19 @@ class UserAlbumLikessHandler {
   }
 
   async getUserAlbumLikesHandler(request) {
-    const { id: credentialId } = request.auth.credentials;
-    const { playlistId, userId } = request.payload;
+    const { id: albumId } = request.params;
 
-    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
-    await this._service.deleteUserAlbumLikes(playlistId, userId);
+    const totalLike = await this._service.getUserAlbumLikeCount(
+      albumId,
+    );
+    let { likes } = totalLike;
+    likes = parseInt(likes, 10);
 
     return {
       status: 'success',
-      message: 'Kolaborasi berhasil dihapus',
+      data: {
+        likes,
+      },
     };
   }
 }

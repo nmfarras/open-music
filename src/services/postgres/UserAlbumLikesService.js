@@ -18,8 +18,6 @@ class UserAlbumLikesService {
       values: [userId, albumId],
     };
     let result = await this._pool.query(query);
-    console.log(!result.rows[0]);
-    console.log(result.rows[0]);
 
     if (!result.rows[0]) {
       // await this._albumsService.addUserAlbumLike(userId, albumId);
@@ -47,11 +45,28 @@ class UserAlbumLikesService {
     result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
+      throw new NotFoundError('Suka album gagal dihapus. Id tidak ditemukan');
     }
 
     // await this._albumsService.deleteUserAlbumLike(userId, albumId);
     return 'Suka berhasil dihapus';
+  }
+
+  async getUserAlbumLikeCount(albumId) {
+    const query = {
+      text: `SELECT COUNT(album_id) as likes
+      FROM user_album_likes
+      WHERE album_id = $1`,
+      values: [albumId],
+    };
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      await this._albumsService.getAlbumById(albumId);
+      throw new NotFoundError('Album tidak ditemukan');
+    }
+
+    return result.rows[0];
   }
 }
 
