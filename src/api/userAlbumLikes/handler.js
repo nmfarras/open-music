@@ -29,18 +29,28 @@ class UserAlbumLikessHandler {
     const totalLike = await this._service.getUserAlbumLikeCount(
       albumId,
     );
-    let { likes } = totalLike;
-    likes = parseInt(likes, 10);
+    let { likes, cookies } = totalLike;
 
-    const response = h.response({
-      status: 'success',
-      data: {
-        likes,
-      },
-    });
-    response.code(200);
-    response.header('X-Data-Source', 'cache');
-    return response;
+    if (cookies) {
+      const response = h.response({
+        status: 'success',
+        data: {
+          likes,
+        },
+      });
+      response.code(200);
+      response.header('X-Data-Source', 'cache');
+      return response;
+    } else {
+      const response = h.response({
+        status: 'success',
+        data: {
+          likes,
+        },
+      });
+      response.code(200);
+      return response;
+    }
   }
 }
 
