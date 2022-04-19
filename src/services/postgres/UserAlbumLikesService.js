@@ -12,6 +12,7 @@ class UserAlbumLikesService {
 
   async addUserAlbumLike(userId, albumId) {
     await this._albumsService.getAlbumById(albumId);
+    
     const query = {
       text: `SELECT ual.* 
       FROM user_album_likes ual 
