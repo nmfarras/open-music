@@ -10,7 +10,7 @@ class UserAlbumLikesService {
 
   async addUserAlbumLike(userId, albumId) {
     await this._albumsService.getAlbumById(albumId);
-    
+
     const query = {
       text: `SELECT ual.* 
       FROM user_album_likes ual 
@@ -34,9 +34,9 @@ class UserAlbumLikesService {
     try {
       // mendapatkan catatan dari cache
       const result = await this._cacheService.get(`likes:${albumId}`);
-      
-      let mappedResult = JSON.parse(result);
-      mappedResult['cookies'] = true;
+
+      const mappedResult = JSON.parse(result);
+      mappedResult.cookies = true;
 
       return mappedResult;
     } catch (error) {
@@ -54,11 +54,11 @@ class UserAlbumLikesService {
         throw new NotFoundError('Album tidak ditemukan');
       }
 
-      let mappedResult = result.rows[0];
+      const mappedResult = result.rows[0];
 
       // catatan akan disimpan pada cache sebelum fungsi getNotes dikembalikan
       await this._cacheService.set(`likes:${albumId}`, JSON.stringify(mappedResult));
-      mappedResult['cookies'] = false;
+      mappedResult.cookies = false;
 
       return mappedResult;
     }
