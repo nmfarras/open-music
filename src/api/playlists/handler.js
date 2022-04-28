@@ -83,20 +83,6 @@ class PlaylistsHandler {
     };
   }
 
-  async getSongsInPlaylistByIdHandler(request) {
-    const { id } = request.params;
-    const { id: credentialId } = request.auth.credentials;
-
-    await this._service.verifyPlaylistAccess(id, credentialId);
-    const playlist = await this._service.getPlaylistById(id);
-    return {
-      status: 'success',
-      data: {
-        playlist,
-      },
-    };
-  }
-
   async getUsersByUsernameHandler(request) {
     const { username = '' } = request.query;
     const users = await this._service.getUsersByUsername(username);
